@@ -1,0 +1,111 @@
+# Windows XP Task Manager style theme for btop
+# Based on classic XP gray/blue palette
+
+theme_background = false
+truecolor = true
+rounded_corners = false
+graph_symbol = "block"
+
+# XP-style colors: grays and blues
+color_theme = """
+# Background
+bg = #ece9d8
+bg2 = #d4d0c8
+bg3 = #c0bdb5
+
+# Text
+fg = #000000
+fg2 = #3a3a3a
+fg3 = #5a5a5a
+
+# Borders
+border = #808080
+border2 = #404040
+
+# Highlights (XP blue)
+accent = #0054e3
+accent2 = #003399
+accent3 = #2d74ff
+
+# Status colors
+green = #008000
+yellow = #c8a500
+red = #c80000
+orange = #ff8000
+magenta = #c800c8
+cyan = #00c8c8
+"""
+
+# Box colors
+box_bg = #ece9d8
+box_bg2 = #d4d0c8
+box_fg = #000000
+box_fg2 = #3a3a3a
+box_border = #808080
+box_border2 = #404040
+
+# Header colors
+header_bg = #0054e3
+header_fg = #ffffff
+header_accent = #2d74ff
+
+# Graph colors
+graph_color = #0054e3
+graph_color2 = #2d74ff
+graph_bg = #ffffff
+
+# Meter colors
+meter_bg = #d4d0c8
+meter_fg = #0054e3
+meter_fg2 = #2d74ff
+
+# Process colors
+proc_fg = #000000
+proc_fg2 = #3a3a3a
+proc_bg = #ece9d8
+proc_bg2 = #d4d0c8
+proc_selected = #0054e3
+proc_selected_fg = #ffffff
+proc_selected_bg = #0054e3
+
+# Tree view
+tree_bg = #ece9d8
+tree_fg = #000000
+tree_selected = #0054e3
+tree_selected_fg = #ffffff
+
+# Menu
+menu_bg = #ece9d8
+menu_fg = #000000
+menu_selected = #0054e3
+menu_selected_fg = #ffffff
+menu_border = #808080
+
+# Button
+button_bg = #ece9d8
+button_fg = #000000
+button_border = #808080
+button_active = #0054e3
+button_active_fg = #ffffff
+
+# Scrollbar
+scroll_bg = #d4d0c8
+scroll_fg = #808080
+scroll_active = #0054e3
+
+# Input
+input_bg = #ffffff
+input_fg = #000000
+input_border = #808080
+input_selected = #0054e3
+input_selected_fg = #ffffff
+
+# Other
+high_priority = #c80000
+mid_priority = #c8a500
+low_priority = #008000
+title_fg = #0054e3
+title_fg2 = #2d74ff
+selected_bg = #0054e3
+selected_fg = #ffffff
+disabled_fg = #808080

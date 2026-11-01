@@ -146,21 +146,74 @@ class Widget(Gtk.Window):
         self.set_default_size(w, h)
         self.move(x, y)
 
+        # XP-style overlay container
+        self.overlay = Gtk.Overlay()
+        self.add(self.overlay)
+
+        # Background frame
+        self.frame = Gtk.DrawingArea()
+        self.frame.connect("draw", self.draw_frame)
+        self.overlay.add(self.frame)
+
+        # Content box with title bar + label
+        self.box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=0)
+        self.overlay.add(self.box)
+
+        # Title bar
+        title_bar = Gtk.DrawingArea()
+        title_bar.set_size_request(w, 18)
+        title_bar.connect("draw", self.draw_title_bar)
+        self.box.pack_start(title_bar, False, False, 0)
+
+        # Content label
         self.label = Gtk.Label(xalign=0, yalign=0)
         self.label.set_selectable(False)
         self.label.set_line_wrap(False)
         self.label.set_ellipsize(Pango.EllipsizeMode.NONE)
-        self.label.set_margin_top(8)
-        self.label.set_margin_bottom(8)
-        self.label.set_margin_start(10)
-        self.label.set_margin_end(10)
+        self.label.set_margin_top(6)
+        self.label.set_margin_bottom(6)
+        self.label.set_margin_start(8)
+        self.label.set_margin_end(8)
         self.label.get_style_context().add_class(css_class)
         self.label.get_style_context().add_class(f"font-{font_size}")
-        self.add(self.label)
+        self.box.pack_start(self.label, False, False, 0)
 
         self.show_all()
         GLib.idle_add(self.make_click_through)
         GLib.timeout_add(1000, self.keep_down)
+
+    def draw_title_bar(self, widget, cr):
+        w = widget.get_allocated_width()
+        # XP blue title bar gradient
+        cr.set_source_rgba(0.0, 0.33, 0.89, 0.95)
+        cr.rectangle(0, 0, w, 18)
+        cr.fill()
+        # Title text
+        cr.select_font_face("Tahoma", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        cr.set_font_size(10)
+        cr.set_source_rgba(1.0, 1.0, 1.0, 0.95)
+        cr.move_to(6, 13)
+        cr.show_text("System Monitor")
+        return False
+
+    def draw_frame(self, widget, cr):
+        w = widget.get_allocated_width()
+        h = widget.get_allocated_height()
+        # XP-style beige background
+        cr.set_source_rgba(0.93, 0.92, 0.88, 0.92)
+        cr.rectangle(0, 0, w, h)
+        cr.fill()
+        # Beveled border
+        cr.set_source_rgba(0.5, 0.5, 0.5, 0.6)
+        cr.set_line_width(1)
+        cr.rectangle(0.5, 0.5, w - 1, h - 1)
+        cr.stroke()
+        # Inner highlight
+        cr.set_source_rgba(1.0, 1.0, 1.0, 0.4)
+        cr.set_line_width(1)
+        cr.rectangle(1.5, 1.5, w - 3, h - 3)
+        cr.stroke()
+        return False
 
     def make_click_through(self):
         window = self.get_window()
@@ -260,6 +313,7 @@ class VisualizerWidget(Gtk.Window):
         return True
 
     def draw(self, _area, cr):
+        # XP-style background with slight transparency
         cr.set_operator(cairo.OPERATOR_CLEAR)
         cr.paint()
         cr.set_operator(cairo.OPERATOR_OVER)
@@ -268,6 +322,31 @@ class VisualizerWidget(Gtk.Window):
 
         width = self.width
         height = self.height
+
+        # XP title bar style
+        cr.set_source_rgba(0.0, 0.33, 0.89, 0.95)
+        cr.rectangle(0, 0, width, 22)
+        cr.fill()
+
+        # XP title text
+        cr.select_font_face("Tahoma", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        cr.set_font_size(11)
+        cr.set_source_rgba(1.0, 1.0, 1.0, 0.95)
+        cr.move_to(8, 15)
+        cr.show_text("System Performance Monitor")
+
+        # Body background
+        cr.set_source_rgba(0.93, 0.92, 0.88, 0.88)
+        cr.rectangle(0, 22, width, height - 22)
+        cr.fill()
+
+        # Border
+        cr.set_source_rgba(0.5, 0.5, 0.5, 0.9)
+        cr.set_line_width(1)
+        cr.rectangle(0.5, 0.5, width - 1, height - 1)
+        cr.stroke()
+
+        # Graph area
         base_y = height * 0.48
         points = []
         for x in range(0, width, 8):
@@ -277,14 +356,16 @@ class VisualizerWidget(Gtk.Window):
             signal += math.sin(t * 1.73 - self.phase * 0.35) * 0.15
             points.append((x, base_y - signal * 52))
 
+        # Glow effect
         for offset, alpha, line_width in ((9, 0.20, 10), (0, 0.68, 2.8), (-5, 0.24, 1.6)):
-            cr.set_source_rgba(0.42, 1.0, 0.35, alpha)
+            cr.set_source_rgba(0.0, 0.33, 0.89, alpha)
             cr.set_line_width(line_width)
             cr.move_to(points[0][0], points[0][1] + offset)
             for x, y in points[1:]:
                 cr.line_to(x, y + offset)
             cr.stroke()
 
+        # Bars with XP blue color
         bar_count = 64
         bar_gap = 5
         bar_width = (width - bar_gap * (bar_count - 1)) / bar_count
@@ -295,18 +376,16 @@ class VisualizerWidget(Gtk.Window):
             value = max(0.0, min(1.0, value + random.uniform(-0.04, 0.04)))
             x = band * (bar_width + bar_gap)
             h = 12 + value * 55
-            cr.set_source_rgba(0.58, 0.93, 1.0, 0.24 + value * 0.34)
+            cr.set_source_rgba(0.0, 0.33, 0.89, 0.34 + value * 0.34)
             cr.rectangle(x, bottom - h, bar_width, h)
             cr.fill()
 
+        # XP-style text
         cr.select_font_face("Lucida Console", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-        cr.set_font_size(12)
-        cr.set_source_rgba(0.0, 0.08, 0.26, 0.70)
-        cr.move_to(5, 19)
-        cr.show_text("synth://wrongside.net/nohw  56k carrier  clock+sine+noise")
-        cr.set_source_rgba(0.86, 1.0, 1.0, 0.72)
-        cr.move_to(4, 18)
-        cr.show_text("synth://wrongside.net/nohw  56k carrier  clock+sine+noise")
+        cr.set_font_size(11)
+        cr.set_source_rgba(0.0, 0.0, 0.0, 0.70)
+        cr.move_to(8, height - 10)
+        cr.show_text("synth://wrongside.net/nohw  56k carrier")
         return False
 
 
@@ -315,11 +394,11 @@ def main():
     window { background: transparent; }
     label {
       background: transparent;
-      color: rgba(215, 239, 255, 0.64);
+      color: rgba(232, 232, 216, 0.92);
       font-family: "Lucida Console", monospace;
       font-size: 10pt;
       font-weight: 700;
-      text-shadow: 1px 1px 2px rgba(0, 24, 82, 0.92);
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.85);
     }
     .font-11 {
       font-size: 11pt;
@@ -328,15 +407,15 @@ def main():
       font-size: 9pt;
     }
     .matrix {
-      color: rgba(118, 255, 83, 0.72);
+      color: rgba(118, 255, 83, 0.85);
       background: transparent;
     }
     .htop {
-      color: rgba(255, 250, 218, 0.88);
-      background: transparent;
+      color: rgba(232, 232, 216, 0.92);
+      background: rgba(228, 226, 216, 0.92);
     }
     .sigil {
-      color: rgba(226, 246, 255, 0.86);
+      color: rgba(226, 246, 255, 0.92);
       background: transparent;
     }
     .visualizer {

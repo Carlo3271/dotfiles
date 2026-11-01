@@ -24,7 +24,7 @@ style = "Regular"
 [window]
 title = "C:\\WINDOWS\\system32\\cmd.exe"
 dynamic_title = false
-opacity = 0.86
+opacity = 0.95
 padding = { x = 10, y = 8 }
 dynamic_padding = true
 decorations = "Full"
