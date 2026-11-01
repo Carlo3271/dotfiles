@@ -270,7 +270,9 @@ class PlayerWindow(Gtk.Window):
         """Initialize YouTube Music API."""
         try:
             if AUTH_FILE.exists():
-                self.ytmusic = YTMusic(str(AUTH_FILE))
+                import json
+                auth_data = json.loads(AUTH_FILE.read_text())
+                self.ytmusic = YTMusic(auth=auth_data)
                 self.status_bar.set_text("YouTube Music: connected (premium)")
             else:
                 self.ytmusic = YTMusic()
@@ -281,19 +283,16 @@ class PlayerWindow(Gtk.Window):
     def auth_ytmusic(self, _widget):
         """Authenticate with YouTube Music premium account."""
         dialog = Gtk.MessageDialog(
-            transient=self,
             flags=0,
             message_type=Gtk.MessageType.INFO,
             text="YouTube Music Authentication",
             secondary_text=(
-                "To access your premium account:\n\n"
-                "1. Run: ytmusicapi oauth\n"
-                "2. Follow the browser flow\n"
-                "3. Copy the JSON to:\n"
-                f"   {AUTH_FILE}\n\n"
-                "Or use browser cookies extension."
+                "Authenticated via browser cookies.\n\n"
+                f"Auth file: {AUTH_FILE}\n\n"
+                "If auth expires, update cookies from Firefox and restart."
             )
         )
+        dialog.set_transient_for(self)
         dialog.add_button("Close", Gtk.ResponseType.CLOSE)
         dialog.run()
         dialog.destroy()
