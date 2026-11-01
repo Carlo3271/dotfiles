@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# HyperCam 2 Style Music Player launcher
+export DISPLAY="${DISPLAY:-:0}"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+
+exec /usr/bin/python3 /home/carlo/.local/share/yt-player/yt-player.py "$@"
