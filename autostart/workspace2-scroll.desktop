@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Workspace 2 Desktop Scroll
+Exec=/home/carlo/.local/bin/x11ctl desktop-scroll --button 4 --desktop 1 --root
+Terminal=false
+X-GNOME-Autostart-enabled=true

@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+status() {
+  echo "CPU governor/min:"
+  grep -H . /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor \
+            /sys/devices/system/cpu/cpu*/cpufreq/scaling_min_freq 2>/dev/null || true
+  echo
+  echo "Kernel VM/scheduler:"
+  sysctl vm.swappiness kernel.timer_migration kernel.nmi_watchdog 2>/dev/null || true
+  echo
+  echo "THP:"
+  cat /sys/kernel/mm/transparent_hugepage/enabled \
+      /sys/kernel/mm/transparent_hugepage/defrag 2>/dev/null || true
+  echo
+  echo "USB HID mousepoll:"
+  cat /sys/module/usbhid/parameters/mousepoll 2>/dev/null || true
+  echo
+  echo "CPU idle disabled states:"
+  grep -H . /sys/devices/system/cpu/cpu*/cpuidle/state2/disable \
+            /sys/devices/system/cpu/cpu*/cpuidle/state3/disable \
+            /sys/devices/system/cpu/cpu*/cpuidle/state4/disable 2>/dev/null || true
+  echo
+  echo "GPU power:"
+  grep -H . /sys/class/drm/card*/device/power_dpm_state \
+            /sys/class/drm/card*/device/power_dpm_force_performance_level 2>/dev/null || true
+  echo
+  echo "Service:"
+  systemctl status low-latency-root.service --no-pager 2>/dev/null || true
+}
+
+if [[ ${1:-} == "--status" ]]; then
+  status
+  exit 0
+fi
+
+if [[ ${EUID} -ne 0 ]]; then
+  echo "Run as root: sudo /home/carlo/.local/bin/low-latency-root [--install|--revert|--status]" >&2
+  exit 1
+fi
+
+if [[ ${1:-} == "--install" ]]; then
+  install -Dm755 "$0" /usr/local/sbin/low-latency-root
+  cat > /etc/systemd/system/low-latency-root.service <<'SERVICE'
+[Unit]
+Description=Low latency CPU/GPU/kernel tuning
+After=multi-user.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/low-latency-root
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+  systemctl daemon-reload
+  systemctl enable --now low-latency-root.service
+  echo "Installed and started low-latency-root.service."
+  exit 0
+fi
+
+if [[ ${1:-} == "--revert" ]]; then
+  systemctl disable --now low-latency-root.service 2>/dev/null || true
+  cpupower frequency-set -d 1600MHz 2>/dev/null || true
+  cpupower frequency-set -g schedutil 2>/dev/null || true
+  sysctl -w vm.swappiness=150
+  sysctl -w kernel.timer_migration=1
+  printf always > /sys/kernel/mm/transparent_hugepage/enabled
+  printf defer+madvise > /sys/kernel/mm/transparent_hugepage/defrag
+  if [[ -w /sys/module/usbhid/parameters/mousepoll ]]; then
+    printf 0 > /sys/module/usbhid/parameters/mousepoll
+  fi
+  for state in /sys/devices/system/cpu/cpu*/cpuidle/state2/disable \
+               /sys/devices/system/cpu/cpu*/cpuidle/state3/disable \
+               /sys/devices/system/cpu/cpu*/cpuidle/state4/disable; do
+    [[ -w "${state}" ]] && printf 0 > "${state}"
+  done
+  for gpu_state in /sys/class/drm/card*/device/power_dpm_state; do
+    [[ -w "${gpu_state}" ]] && printf balanced > "${gpu_state}" || true
+  done
+  for gpu_level in /sys/class/drm/card*/device/power_dpm_force_performance_level; do
+    [[ -w "${gpu_level}" ]] && printf auto > "${gpu_level}" || true
+  done
+  echo "Low-latency root settings reverted."
+  exit 0
+fi
+
+powerprofilesctl set performance 2>/dev/null || true
+
+cpupower frequency-set -g performance
+cpupower frequency-set -d 3900MHz
+
+sysctl -w vm.swappiness=10
+sysctl -w kernel.timer_migration=0
+
+printf madvise > /sys/kernel/mm/transparent_hugepage/enabled
+printf never > /sys/kernel/mm/transparent_hugepage/defrag
+
+if [[ -w /sys/module/usbhid/parameters/mousepoll ]]; then
+  printf 1 > /sys/module/usbhid/parameters/mousepoll
+fi
+
+for state in /sys/devices/system/cpu/cpu*/cpuidle/state2/disable \
+             /sys/devices/system/cpu/cpu*/cpuidle/state3/disable \
+             /sys/devices/system/cpu/cpu*/cpuidle/state4/disable; do
+  [[ -w "${state}" ]] && printf 1 > "${state}"
+done
+
+for gpu_state in /sys/class/drm/card*/device/power_dpm_state; do
+  [[ -w "${gpu_state}" ]] && printf performance > "${gpu_state}" || true
+done
+
+for gpu_level in /sys/class/drm/card*/device/power_dpm_force_performance_level; do
+  [[ -w "${gpu_level}" ]] && printf high > "${gpu_level}" || true
+done
+
+echo "Low-latency root settings applied."

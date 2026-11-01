@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if command -v xfconf-query >/dev/null 2>&1; then
+  xfconf-query -c xfwm4 -p /general/use_compositing -s false || true
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/profile-on-ac -s performance || true
+  xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/inactivity-on-ac -s 0 || true
+fi
+
+if command -v powerprofilesctl >/dev/null 2>&1; then
+  powerprofilesctl set performance || true
+fi
+
+if command -v xrandr >/dev/null 2>&1; then
+  xrandr --output HDMI-1 --mode 1440x900 --rate 74.98 \
+    --output VGA-1 --mode 1440x900 --rate 74.98 --right-of HDMI-1 || true
+fi
+
+(
+  for _ in $(seq 1 60); do
+    pids="$(pgrep -u "${USER}" -x steamwebhelper tumblerd glycin-svg glycin-image-rs 2>/dev/null | tr '\n' ' ')"
+    if [ -n "${pids}" ]; then
+      renice -n 10 -p ${pids} >/dev/null 2>&1 || true
+      ionice -c3 -p ${pids} >/dev/null 2>&1 || true
+    fi
+    sleep 10
+  done
+) &

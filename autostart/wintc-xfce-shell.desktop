@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Windows XP Taskband
+Comment=Use the WINTC taskband instead of the default Xfce panel
+Exec=/home/carlo/.local/bin/wintc-xfce-shell
+Hidden=false
+X-GNOME-Autostart-enabled=true

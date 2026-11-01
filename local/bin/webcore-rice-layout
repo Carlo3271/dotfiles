@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+setsid -f python3 "$HOME/.local/share/webcore-rice/webcore_music.py" \
+  >"$HOME/.local/share/webcore-rice/music.log" 2>&1
+
+setsid -f alacritty \
+  --class WebcoreFetch,WebcoreFetch \
+  --title 'God$mack//404.exe' \
+  -o 'window.decorations="None"' \
+  -o 'window.dynamic_title=false' \
+  -o 'window.opacity=0.84' \
+  -o 'window.dimensions.columns=98' \
+  -o 'window.dimensions.lines=18' \
+  -o 'window.padding.x=8' \
+  -o 'window.padding.y=8' \
+  -o 'colors.primary.background="#001b5d"' \
+  -o 'colors.primary.foreground="#d7efff"' \
+  -e bash "$HOME/.local/share/webcore-rice/fetch.sh" \
+  >"$HOME/.local/share/webcore-rice/fetch.log" 2>&1
+
+sleep 1.2
+
+music_window="$(xdotool search --sync --name "bôa - Duvet" | tail -n 1 || true)"
+if [ -n "$music_window" ]; then
+  xdotool windowsize "$music_window" 430 480
+  xdotool windowmove "$music_window" 4 150
+fi
+
+fetch_window="$(xdotool search --sync --class WebcoreFetch | tail -n 1 || true)"
+if [ -n "$fetch_window" ]; then
+  xdotool windowsize "$fetch_window" 876 458
+  xdotool windowmove "$fetch_window" 1956 90
+  xprop -id "$fetch_window" -f _MOTIF_WM_HINTS 32c -set _MOTIF_WM_HINTS '2, 0, 0, 0, 0' >/dev/null 2>&1 || true
+  xprop -id "$fetch_window" -f _NET_WM_STATE 32a -set _NET_WM_STATE '_NET_WM_STATE_BELOW,_NET_WM_STATE_SKIP_TASKBAR,_NET_WM_STATE_SKIP_PAGER,_NET_WM_STATE_STICKY' >/dev/null 2>&1 || true
+fi

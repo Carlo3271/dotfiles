@@ -1,0 +1,44 @@
+# Secrets and machine-specific
+.ssh/
+.gnupg/
+.hermes/auth.json
+.hermes/.env
+.codex/auth.json
+.claude/.credentials.json
+.claude.json
+.ollama/config.json
+.gemini/oauth_creds.json
+.gemini/google_accounts.json
+.openclaw/openclaw.json
+.vscode-oss/argv.json
+.npmrc
+
+# Cache / runtime / logs
+**/*.log
+**/__pycache__/
+**/*.pyc
+.cache/
+.local/state/
+.steam/logs/
+.xsession-errors*
+.ICEauthority
+.Xauthority
+.wine/.update-timestamp
+.dmrc
+.bash_history
+.viminfo
+
+# Downloaded / non-custom assets
+# (Keep Luna-Webcore and WhiteSur-Dark, drop stock themes if desired)
+# Windows XP Linux style (Blue) is a downloaded theme — remove if you want pure custom
+# themes/Windows XP Linux style (Blue)/
+
+.dotfiles-backup-*
+.agy
+
+# OS / editor generated
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db

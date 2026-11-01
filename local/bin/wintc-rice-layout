@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PICOM_CONFIG="$HOME/.config/picom/webcore.conf"
+
+if ! pgrep -x picom >/dev/null 2>&1; then
+  setsid -f picom --config "$PICOM_CONFIG" >/dev/null 2>&1
+  sleep 0.6
+fi
+
+pkill -f 'alacritty --class CMatrixDash' >/dev/null 2>&1 || true
+pkill -f 'alacritty --class HtopDash' >/dev/null 2>&1 || true
+pkill -f 'alacritty --class WebcoreFetch' >/dev/null 2>&1 || true
+
+if ! pgrep -af "$HOME/.local/share/webcore-rice/reactive_widgets.py" >/dev/null 2>&1; then
+  setsid -f python3 "$HOME/.local/share/webcore-rice/reactive_widgets.py" \
+    >"$HOME/.local/share/webcore-rice/widgets.log" 2>&1
+fi

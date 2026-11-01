@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+set -eu
+
+wintc-taskband -q >/dev/null 2>&1 || true
+xfce4-panel -q >/dev/null 2>&1 || true
+
+exec wintc-taskband

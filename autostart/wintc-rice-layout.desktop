@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Windows XP Rice Layout
+Comment=Launch the native reactive XP webcore desktop widgets
+Exec=/home/carlo/.local/bin/wintc-rice-layout
+Hidden=false
+X-GNOME-Autostart-enabled=true

@@ -1,0 +1,10 @@
+[Configuration]
+FontName=Lucida Console 10
+FontUseSystem=FALSE
+MiscAlwaysShowTabs=FALSE
+ColorForeground=#d7efff
+ColorBackground=#001b5d
+ColorCursor=#76ff53
+ColorPalette=#00102d;#ff6b8a;#76ff53;#fff066;#2d74ff;#ff7ad9;#59fcff;#ece9d8;#5b79bd;#ff9caf;#a4ff8e;#fff8a6;#92cbff;#ffb1ee;#b7ffff;#ffffff
+BackgroundMode=TERMINAL_BACKGROUND_TRANSPARENT
+BackgroundDarkness=0.860000

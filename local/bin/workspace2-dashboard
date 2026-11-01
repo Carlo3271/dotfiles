@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export DISPLAY="${DISPLAY:-:0}"
+
+x11=/home/carlo/.local/bin/x11ctl
+desktop=1
+
+sleep 2
+
+"/home/carlo/.local/bin/wintc-rice-layout"
+"$x11" switch "$desktop"

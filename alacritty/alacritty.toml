@@ -1,0 +1,88 @@
+[font]
+size = 11.0
+
+[font.offset]
+x = 1
+y = 0
+
+[font.normal]
+family = "Lucida Console"
+style = "Regular"
+
+[font.bold]
+family = "Lucida Console"
+style = "Regular"
+
+[font.italic]
+family = "Lucida Console"
+style = "Regular"
+
+[font.bold_italic]
+family = "Lucida Console"
+style = "Regular"
+
+[window]
+title = "C:\\WINDOWS\\system32\\cmd.exe"
+dynamic_title = false
+opacity = 0.86
+padding = { x = 10, y = 8 }
+dynamic_padding = true
+decorations = "Full"
+decorations_theme_variant = "Light"
+
+[scrolling]
+history = 12000
+multiplier = 4
+
+[cursor.style]
+shape = "Beam"
+blinking = "On"
+
+[cursor]
+blink_interval = 520
+blink_timeout = 0
+
+[mouse]
+hide_when_typing = true
+
+[bell]
+animation = "EaseOutExpo"
+duration = 60
+color = "#fff066"
+
+[colors.primary]
+foreground = "#d7efff"
+background = "#001b5d"
+
+[colors.cursor]
+text = "#001b5d"
+cursor = "#76ff53"
+
+[colors.selection]
+text = "#ffffff"
+background = "#2d74ff"
+
+[colors.normal]
+black = "#00102d"
+red = "#ff6b8a"
+green = "#76ff53"
+yellow = "#fff066"
+blue = "#2d74ff"
+magenta = "#ff7ad9"
+cyan = "#59fcff"
+white = "#ece9d8"
+
+[colors.bright]
+black = "#5b79bd"
+red = "#ff9caf"
+green = "#a4ff8e"
+yellow = "#fff8a6"
+blue = "#92cbff"
+magenta = "#ffb1ee"
+cyan = "#b7ffff"
+white = "#ffffff"
+
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001B\r"

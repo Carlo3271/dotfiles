@@ -1,0 +1,41 @@
+<?xml version="1.1" encoding="UTF-8"?>
+
+<channel name="displays" version="1.0">
+  <property name="ActiveProfile" type="string" value="Default"/>
+  <property name="Notify" type="int" value="3"/>
+  <property name="AutoEnableProfiles" type="int" value="3"/>
+  <property name="Default" type="empty">
+    <property name="HDMI-1" type="string" value="Samsung Electric Company 19&quot;">
+      <property name="Active" type="bool" value="true"/>
+      <property name="EDID" type="string" value="b1a1ebef24499f661932deb4e40ea890a7e486f8"/>
+      <property name="DuplicateEDID" type="bool" value="false"/>
+      <property name="Resolution" type="string" value="1440x900"/>
+      <property name="RefreshRate" type="double" value="74.984427365724414"/>
+      <property name="ModeFlags" type="uint64" value="6"/>
+      <property name="Rotation" type="int" value="0"/>
+      <property name="Reflection" type="string" value="0"/>
+      <property name="Primary" type="bool" value="true"/>
+      <property name="Scale" type="double" value="1"/>
+      <property name="Position" type="empty">
+        <property name="X" type="int" value="0"/>
+        <property name="Y" type="int" value="0"/>
+      </property>
+    </property>
+    <property name="VGA-1" type="string" value="Samsung Electric Company 17&quot;">
+      <property name="Active" type="bool" value="true"/>
+      <property name="EDID" type="string" value="e9eb754008ee0a464d9fb1d61623326a25d66a55"/>
+      <property name="DuplicateEDID" type="bool" value="false"/>
+      <property name="Resolution" type="string" value="1440x900"/>
+      <property name="RefreshRate" type="double" value="59.887445342162557"/>
+      <property name="ModeFlags" type="uint64" value="6"/>
+      <property name="Rotation" type="int" value="0"/>
+      <property name="Reflection" type="string" value="0"/>
+      <property name="Primary" type="bool" value="false"/>
+      <property name="Scale" type="double" value="1"/>
+      <property name="Position" type="empty">
+        <property name="X" type="int" value="1440"/>
+        <property name="Y" type="int" value="0"/>
+      </property>
+    </property>
+  </property>
+</channel>

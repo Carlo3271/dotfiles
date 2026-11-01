@@ -1,0 +1,146 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "logo": {
+    "type": "file",
+    "source": "/home/carlo/.config/fastfetch/godsmack-xp.logo",
+    "position": "top",
+    "padding": {
+      "top": 0,
+      "left": 0,
+      "right": 0
+    },
+    "printRemaining": false,
+    "color": {
+      "1": "94",
+      "2": "92",
+      "3": "95"
+    }
+  },
+  "display": {
+    "separator": "  ",
+    "color": {
+      "keys": "94",
+      "title": "94",
+      "output": "97",
+      "separator": "92"
+    },
+    "key": {
+      "width": 12,
+      "type": "string",
+      "paddingLeft": 0
+    },
+    "brightColor": true,
+    "percent": {
+      "type": 3,
+      "ndigits": 0,
+      "color": {
+        "green": "32",
+        "yellow": "93",
+        "red": "91"
+      },
+      "width": 0
+    },
+    "bar": {
+      "char": {
+        "elapsed": "█",
+        "total": "░"
+      },
+      "border": {
+        "left": "[",
+        "right": "]"
+      },
+      "width": 14
+    },
+    "temp": {
+      "unit": "C",
+      "ndigits": 1,
+      "color": {
+        "green": "32",
+        "yellow": "93",
+        "red": "91"
+      }
+    }
+  },
+  "modules": [
+    "title",
+    "separator",
+    {
+      "type": "os",
+      "key": "OS"
+    },
+    {
+      "type": "kernel",
+      "key": "Kernel"
+    },
+    {
+      "type": "uptime",
+      "key": "Uptime"
+    },
+    {
+      "type": "packages",
+      "key": "Packages"
+    },
+    {
+      "type": "shell",
+      "key": "Shell"
+    },
+    {
+      "type": "wm",
+      "key": "WM"
+    },
+    {
+      "type": "terminal",
+      "key": "Terminal"
+    },
+    "break",
+    {
+      "type": "cpu",
+      "key": "CPU",
+      "temp": false
+    },
+    {
+      "type": "cpuusage",
+      "key": "CPU Load"
+    },
+    {
+      "type": "command",
+      "key": "CPU Temp",
+      "text": "sensors | awk '/Package id 0:/ {gsub(/^\\+/, \"\", $4); print $4; exit}'"
+    },
+    {
+      "type": "gpu",
+      "key": "GPU",
+      "temp": false
+    },
+    {
+      "type": "command",
+      "key": "GPU Temp",
+      "text": "sensors | awk '/radeon-pci/{r=1} r && /temp1:/ {gsub(/^\\+/, \"\", $2); print $2; exit}'"
+    },
+    {
+      "type": "loadavg",
+      "key": "Load Avg"
+    },
+    "break",
+    {
+      "type": "memory",
+      "key": "Memory"
+    },
+    {
+      "type": "disk",
+      "key": "Disk",
+      "showRegular": true,
+      "showHidden": false,
+      "showSubvolumes": false,
+      "hideFolders": "/efi:/boot:/boot/*"
+    },
+    {
+      "type": "localip",
+      "key": "LAN",
+      "showIpv4": true,
+      "showIpv6": false,
+      "showMac": false,
+      "defaultRouteOnly": true
+    }
+  ]
+}

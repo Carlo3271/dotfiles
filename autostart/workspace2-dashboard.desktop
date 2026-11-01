@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Workspace 2 Dashboard
+Exec=/home/carlo/.local/bin/workspace2-dashboard
+Terminal=false
+X-GNOME-Autostart-enabled=true

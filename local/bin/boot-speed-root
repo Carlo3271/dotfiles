@@ -1,0 +1,161 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+FSTAB_BACKUP=/etc/fstab.codex-boot-speed.bak
+MKINITCPIO_BACKUP=/etc/mkinitcpio.conf.codex-boot-speed.bak
+
+limine_configs=(
+  /boot/limine.conf
+  /boot/limine/limine.conf
+  /boot/EFI/BOOT/limine.conf
+  /boot/EFI/Limine/limine.conf
+)
+
+status() {
+  echo "Boot time:"
+  systemd-analyze time || true
+  echo
+  echo "Critical chain:"
+  systemd-analyze critical-chain || true
+  echo
+  echo "/boot fstab line:"
+  awk '$2 == "/boot" { print }' /etc/fstab || true
+  echo
+  echo "Bootloader timeout lines:"
+  for conf in "${limine_configs[@]}"; do
+    if [[ -f "${conf}" ]]; then
+      echo "${conf}:"
+      grep -Ein '^[[:space:]]*(TIMEOUT|timeout)[[:space:]]*[:=]' "${conf}" || true
+      grep -Ein '^[[:space:]]*(CMDLINE|cmdline)[[:space:]]*[:=]' "${conf}" || true
+    fi
+  done
+  echo
+  echo "mkinitcpio hooks:"
+  grep -En '^[[:space:]]*HOOKS=' /etc/mkinitcpio.conf || true
+  echo
+  echo "Speed-cut services/timers:"
+  systemctl is-enabled NetworkManager-wait-online.service avahi-daemon.service avahi-daemon.socket \
+    cachyos-rate-mirrors.timer plocate-updatedb.timer man-db.timer bluetooth.service \
+    lm_sensors.service NetworkManager-dispatcher.service plymouth-quit-wait.service 2>/dev/null || true
+}
+
+remove_limine_splash() {
+  local conf=$1
+  [[ -f "${conf}" ]] || return 0
+  cp -an "${conf}" "${conf}.codex-boot-speed.bak"
+  sed -i -E '/^[[:space:]]*(CMDLINE|cmdline)[[:space:]]*[:=]/ {
+    s/(^|[[:space:]])splash([[:space:]]|$)/ /g
+    s/[[:space:]]+/ /g
+    s/[[:space:]]+$//
+  }' "${conf}"
+}
+
+set_limine_timeout() {
+  local conf=$1
+  [[ -f "${conf}" ]] || return 0
+  cp -an "${conf}" "${conf}.codex-boot-speed.bak"
+  if grep -Eq '^[[:space:]]*(TIMEOUT|timeout)[[:space:]]*[:=]' "${conf}"; then
+    sed -i -E 's/^([[:space:]]*)(TIMEOUT|timeout)([[:space:]]*[:=][[:space:]]*).*/\1\2\31/' "${conf}"
+  else
+    printf '\nTIMEOUT=1\n' >> "${conf}"
+  fi
+}
+
+if [[ ${1:-} == "--status" ]]; then
+  status
+  exit 0
+fi
+
+if [[ ${EUID} -ne 0 ]]; then
+  echo "Run as root: sudo /home/carlo/.local/bin/boot-speed-root [--install|--revert|--status]" >&2
+  exit 1
+fi
+
+if [[ ${1:-} == "--revert" ]]; then
+  if [[ -f "${FSTAB_BACKUP}" ]]; then
+    cp -a "${FSTAB_BACKUP}" /etc/fstab
+  fi
+  if [[ -f "${MKINITCPIO_BACKUP}" ]]; then
+    cp -a "${MKINITCPIO_BACKUP}" /etc/mkinitcpio.conf
+    mkinitcpio -P
+  fi
+  for conf in "${limine_configs[@]}"; do
+    if [[ -f "${conf}.codex-boot-speed.bak" ]]; then
+      cp -a "${conf}.codex-boot-speed.bak" "${conf}"
+    fi
+  done
+  systemctl unmask plymouth-quit-wait.service 2>/dev/null || true
+  systemctl enable NetworkManager-wait-online.service avahi-daemon.service avahi-daemon.socket \
+    cachyos-rate-mirrors.timer plocate-updatedb.timer man-db.timer bluetooth.service \
+    lm_sensors.service NetworkManager-dispatcher.service 2>/dev/null || true
+  systemctl daemon-reload
+  echo "Boot speed tuning reverted."
+  exit 0
+fi
+
+if [[ ${1:-} != "--install" ]]; then
+  echo "Usage: $0 --install|--revert|--status" >&2
+  exit 2
+fi
+
+cp -an /etc/fstab "${FSTAB_BACKUP}"
+cp -an /etc/mkinitcpio.conf "${MKINITCPIO_BACKUP}"
+tmp_fstab=$(mktemp)
+awk '
+  BEGIN { OFS="\t" }
+  $2 == "/boot" && $3 == "vfat" {
+    $4 = "noauto,x-systemd.automount,x-systemd.idle-timeout=30s,umask=0077"
+    $6 = "0"
+  }
+  { print }
+' /etc/fstab > "${tmp_fstab}"
+install -m 0644 "${tmp_fstab}" /etc/fstab
+rm -f "${tmp_fstab}"
+
+tmp_mkinitcpio=$(mktemp)
+awk '
+  /^[[:space:]]*HOOKS=\(/ {
+    line = $0
+    sub(/^[[:space:]]*HOOKS=\(/, "", line)
+    sub(/\)[[:space:]]*$/, "", line)
+    n = split(line, hooks, /[[:space:]]+/)
+    out = "HOOKS=("
+    first = 1
+    for (i = 1; i <= n; i++) {
+      if (hooks[i] == "" || hooks[i] == "plymouth") {
+        continue
+      }
+      out = out (first ? "" : " ") hooks[i]
+      first = 0
+    }
+    print out ")"
+    next
+  }
+  { print }
+' /etc/mkinitcpio.conf > "${tmp_mkinitcpio}"
+install -m 0644 "${tmp_mkinitcpio}" /etc/mkinitcpio.conf
+rm -f "${tmp_mkinitcpio}"
+
+for conf in "${limine_configs[@]}"; do
+  set_limine_timeout "${conf}"
+  remove_limine_splash "${conf}"
+done
+
+mkinitcpio -P
+
+systemctl disable --now NetworkManager-wait-online.service 2>/dev/null || true
+systemctl disable --now avahi-daemon.service avahi-daemon.socket 2>/dev/null || true
+systemctl disable --now cachyos-rate-mirrors.timer cachyos-rate-mirrors.service 2>/dev/null || true
+systemctl disable --now plocate-updatedb.timer plocate-updatedb.service 2>/dev/null || true
+systemctl disable --now man-db.timer man-db.service 2>/dev/null || true
+systemctl disable --now lm_sensors.service 2>/dev/null || true
+systemctl disable --now NetworkManager-dispatcher.service 2>/dev/null || true
+
+if ! compgen -G '/sys/class/bluetooth/hci*' >/dev/null; then
+  systemctl disable --now bluetooth.service 2>/dev/null || true
+fi
+
+systemctl mask plymouth-quit-wait.service 2>/dev/null || true
+systemctl daemon-reload
+
+echo "Boot/app speed tuning applied."

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Picom
+Exec=picom --config /home/carlo/.config/picom/webcore.conf
+Hidden=false
+X-GNOME-Autostart-enabled=true

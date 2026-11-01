@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Low Latency Session
+Comment=Apply user-session latency settings
+Exec=/home/carlo/.local/bin/low-latency-session
+OnlyShowIn=XFCE;
+X-GNOME-Autostart-enabled=true
+Hidden=false
+NoDisplay=false
+Terminal=false
+StartupNotify=false

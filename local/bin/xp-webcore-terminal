@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+hold=0
+if [[ "${1:-}" == "--hold" ]]; then
+  hold=1
+fi
+
+esc=$'\033'
+reset="${esc}[0m"
+title="${esc}[38;2;255;255;255;48;2;0;84;227m"
+blue="${esc}[38;2;146;203;255m"
+cyan="${esc}[38;2;89;252;255m"
+green="${esc}[38;2;118;255;83m"
+pink="${esc}[38;2;255;122;217m"
+cream="${esc}[38;2;236;233;216m"
+muted="${esc}[38;2;124;156;204m"
+yellow="${esc}[38;2;255;240;102m"
+
+if [[ "${XP_WEBCORE_SPLASH_CLEAR:-1}" == 1 ]]; then
+  clear 2>/dev/null || true
+fi
+
+host="$(hostname 2>/dev/null || printf 'localhost')"
+kernel="$(uname -r)"
+uptime_text="$(uptime -p 2>/dev/null | sed 's/^up //' || printf 'unknown')"
+mem_text="$(free -h | awk '/Mem:/ {print $3 " / " $2}')"
+disk_text="$(df -h / | awk 'NR==2 {print $3 " / " $2 " (" $5 ")"}')"
+term_text="${TERM:-unknown}"
+
+art=(
+'G O D $ M A C K // 404'
+'<\\====[ WRONGSIDE.NET ]====//>'
+'        /\        /\'
+'   ____/  \__G$__/  \____'
+'  / __  __/\____/\__  __ \'
+' /_/  \/  / 404  \  \/  \_\'
+' \ \__/\_/__NOISE__\_/\__/ /'
+'  \____/  \/====\/  \____/'
+'      /___/ DIALUP \___\'
+'    __\___VOID.EXE___/__'
+'   /_/__SIGNAL_ROT__\_\'
+'<<<__________XP//STATIC__________>>>'
+)
+
+info=(
+"${cyan}God\$mack//404 Webcore Terminal${reset}"
+"${cream}User${reset}      ${green}carlo@${host}${reset}"
+"${cream}Kernel${reset}    ${blue}${kernel}${reset}"
+"${cream}WM${reset}        ${blue}XFCE + WinTC Luna shell${reset}"
+"${cream}GPU${reset}       ${blue}AMD Cedar / Radeon HD 5000${reset}"
+"${cream}Memory${reset}    ${blue}${mem_text:-unknown}${reset}"
+"${cream}Disk${reset}      ${blue}${disk_text:-unknown}${reset}"
+"${cream}Uptime${reset}    ${blue}${uptime_text}${reset}"
+"${cream}Terminal${reset}  ${blue}${term_text}${reset}"
+"${cream}Sigil${reset}     ${pink}sharp G\$ monogram / 404 wrongside net${reset}"
+"${cream}Status${reset}    ${green}ONLINE${reset} ${yellow}READY${reset}"
+"${muted}C:\\WINDOWS\\system32\\God\$mack.exe${reset}"
+)
+
+cols="$(tput cols 2>/dev/null || printf '80')"
+printf '%b GOD$MACK//404.EXE %b\n' "$title" "$reset"
+printf '%b+---------------------------------------------------------------+%b\n' "$blue" "$reset"
+
+if [[ "$cols" -ge 96 ]]; then
+  for i in "${!art[@]}"; do
+    printf '%b%-43s%b  %s\n' "$pink" "${art[$i]}" "$reset" "${info[$i]:-}"
+  done
+else
+  for line in "${art[@]}"; do
+    printf '%b%s%b\n' "$pink" "$line" "$reset"
+  done
+  printf '\n'
+  for line in "${info[@]}"; do
+    printf '%s\n' "$line"
+  done
+fi
+
+printf '%b+---------------------------------------------------------------+%b\n' "$blue" "$reset"
+
+if [[ "$hold" == 1 ]]; then
+  printf '\n%bC:\\Documents and Settings\\carlo\\God$mack>%b ' "$green" "$reset"
+  while sleep 3600; do :; done
+fi

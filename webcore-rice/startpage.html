@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>webcore startpage</title>
+  <style>
+    :root {
+      --xp-blue: #0054e3;
+      --xp-dark: #003399;
+      --xp-cream: #ece9d8;
+      --xp-green: #36a51f;
+      --xp-cyan: #59fcff;
+      --xp-pink: #ff7ad9;
+      --ink: #111;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Tahoma, Verdana, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #63b9ff 0%, #bdeeff 45%, #64c94d 46%, #2a8c24 100%);
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,.22) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.20) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mix-blend-mode: soft-light;
+      pointer-events: none;
+    }
+
+    .window {
+      width: min(620px, calc(100vw - 40px));
+      margin: 46px auto 0;
+      border: 2px solid var(--xp-dark);
+      background: var(--xp-cream);
+      box-shadow: 6px 6px 0 rgba(0, 0, 0, .28);
+    }
+
+    .titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 30px;
+      padding: 0 8px;
+      color: white;
+      font-weight: bold;
+      background: linear-gradient(180deg, #2d8cff, var(--xp-blue) 55%, var(--xp-dark));
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 1fr 210px;
+      gap: 14px;
+      padding: 14px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      color: var(--xp-blue);
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    .status {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 3px 8px;
+      color: white;
+      background: var(--xp-green);
+      border: 1px solid #1d6f12;
+      font-weight: bold;
+    }
+
+    .links {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    a {
+      color: var(--xp-dark);
+      background: white;
+      border: 1px solid #8b8b8b;
+      padding: 9px;
+      text-decoration: none;
+      box-shadow: inset -1px -1px #b4b4b4;
+    }
+
+    a:hover {
+      color: white;
+      background: var(--xp-blue);
+    }
+
+    .sigil {
+      display: grid;
+      place-items: center;
+      min-height: 230px;
+      color: var(--xp-pink);
+      background: #001b5d;
+      border: 2px inset white;
+      font: 15px "Lucida Console", monospace;
+      white-space: pre;
+      text-shadow: 0 0 6px var(--xp-cyan);
+    }
+
+    .ticker {
+      margin-top: 12px;
+      padding: 6px;
+      color: white;
+      background: #001b5d;
+      font: 13px "Lucida Console", monospace;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .ticker span {
+      display: inline-block;
+      animation: crawl 16s linear infinite;
+    }
+
+    @keyframes crawl {
+      from { transform: translateX(100%); }
+      to { transform: translateX(-100%); }
+    }
+
+    @media (max-width: 680px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="window">
+    <div class="titlebar">
+      <span>webcore startpage</span>
+    </div>
+    <main>
+      <section>
+        <h1>God$mack online</h1>
+        <div class="status">G$ XP LUNA MODE ACTIVE</div>
+        <div class="links">
+          <a href="https://neocities.org/browse">neocities</a>
+          <a href="https://www.reddit.com/r/windowsxp/">windowsxp</a>
+          <a href="https://www.reddit.com/r/unixporn/">unixporn</a>
+          <a href="file:///home/carlo">home folder</a>
+        </div>
+        <div class="ticker"><span>C:\webcore\God$mack.exe loaded - click Start - stay online - no aero, just luna</span></div>
+      </section>
+      <aside class="sigil">GOD$MACK // 404
+&lt;\\====[ WRONGSIDE.NET ]====//&gt;
+        /\        /\
+   ____/  \__G$__/  \____
+  / __  __/\____/\__  __ \
+ /_/  \/  / 404  \  \/  \_\
+ \ \__/\_/__NOISE__\_/\__/ /
+  \____/  \/====\/  \____/
+      /___/ DIALUP \___\
+    __\___VOID.EXE___/__
+   /_/__SIGNAL_ROT__\_\
+&lt;&lt;&lt;__________XP//STATIC__________&gt;&gt;&gt;</aside>
+    </main>
+  </section>
+</body>
+</html>

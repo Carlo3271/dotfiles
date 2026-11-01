@@ -1,0 +1,91 @@
+configuration {
+  modi: "drun,run,window";
+  show-icons: true;
+  display-drun: "Programs";
+  display-run: "Run";
+  display-window: "Windows";
+  font: "Tahoma 9";
+  terminal: "alacritty";
+  drun-display-format: "{name}";
+}
+
+* {
+  bg: #ece9d8ff;
+  panel: #0054e3ff;
+  field: #ffffffff;
+  fg: #1f1f1fff;
+  muted: #5a5a5aff;
+  accent: #2d74ffff;
+  start: #36a51fff;
+  urgent: #d64b42ff;
+}
+
+window {
+  width: 40%;
+  location: center;
+  anchor: center;
+  background-color: @bg;
+  border: 2px;
+  border-color: @panel;
+  border-radius: 0;
+}
+
+mainbox {
+  spacing: 6px;
+  padding: 3px 8px 8px 8px;
+  background-color: transparent;
+}
+
+inputbar {
+  children: [ prompt, entry ];
+  background-color: @panel;
+  padding: 6px 8px;
+  spacing: 7px;
+  border: 0 0 1px 0;
+  border-color: #003399ff;
+}
+
+prompt {
+  text-color: #ffffffff;
+  background-color: @start;
+  padding: 2px 9px;
+}
+
+entry {
+  text-color: #ffffffff;
+  placeholder: "Search programs and files";
+  placeholder-color: @muted;
+}
+
+listview {
+  lines: 9;
+  columns: 1;
+  fixed-height: false;
+  spacing: 1px;
+  background-color: transparent;
+}
+
+element {
+  padding: 6px 8px;
+  background-color: transparent;
+  text-color: @fg;
+}
+
+element selected {
+  background-color: @accent;
+  text-color: #ffffffff;
+}
+
+element-icon {
+  size: 20px;
+  margin: 0 8px 0 0;
+}
+
+element-text {
+  text-color: inherit;
+}
+
+message,
+textbox {
+  text-color: @muted;
+}
