@@ -30,6 +30,8 @@
 | `scripts/` | xp-webcore-terminal, wintc-rice-layout, low-latency-session, screenshot-copy, etc. |
 | `themes/` | Luna-Webcore, WhiteSur-Dark |
 | `webcore-rice/` | reactive widgets, fetch/music scripts |
+| `yt-player/` | HyperCam 2-style YouTube Music desktop player |
+| `local/bin/` | launcher scripts including `yt-player` |
 
 ## Install
 
@@ -56,3 +58,22 @@ These are installed via package manager, not tracked here:
 
 XP Luna aesthetic inspired by the Windows XP Luna theme.  
 God$mack//404 terminal sigil by carlo.
+
+## yt-player setup
+
+Requires: `python3`, `ytmusicapi`, `yt-dlp`, `mpv`, GTK3 + GStreamer + Cairo.
+
+Auth uses browser cookies extracted from Firefox:
+
+```bash
+python3 -c "
+import json, browser_cookie3
+cookies = browser_cookie3.firefox(cookie_file='$HOME/.config/mozilla/firefox/*/cookies.sqlite')
+yt = [c for c in cookies if 'youtube.com' in c.domain]
+header = '; '.join(f'{c.name}={c.value}' for c in yt)
+vid = next((c.value for c in yt if c.name == 'VISITOR_INFO1_LIVE'), '')
+json.dump({'cookie': header, 'authorization': 'SAPISIDHASH 0000000000_dummy', 'origin': 'https://music.youtube.com', 'x-goog-visitor-id': vid}, open('$HOME/.config/yt-player/auth.json','w'), indent=2)
+"
+```
+
+Launch with `yt-player` or run `python3 ~/.local/share/yt-player/yt-player.py`.

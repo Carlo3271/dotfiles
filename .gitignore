@@ -12,6 +12,7 @@
 .openclaw/openclaw.json
 .vscode-oss/argv.json
 .npmrc
+.config/yt-player/auth.json
 
 # Cache / runtime / logs
 **/*.log
